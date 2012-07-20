@@ -1,5 +1,6 @@
 (require '[clojure.string :as s])
 (use '[clojure.java.shell :only (sh)])
+(use '[clojure.java.io    :only (file)])
 
 (def version-string
   (memoize
@@ -24,22 +25,13 @@
            (#(take 4 %))
            (#(s/join "." %))))))))
 
-(defproject puppetdb (version-string)
-  :description "Puppet-integrated catalog and fact storage"
-  :dependencies [[org.clojure/clojure "1.3.0"]
+(defproject com.puppetlabs.util (version-string)
+  :description "Puppet Labs shared Clojure utilities"
+  :dependencies [[org.clojure/clojure "1.4.0"]
                  [cheshire "4.0.0"]
                  [org.clojure/core.incubator "0.1.0"]
-                 [org.clojure/core.match "0.2.0-alpha9"]
-                 [org.clojure/core.memoize "0.5.1"]
-                 [org.clojure/math.combinatorics "0.0.2"]
                  [org.clojure/tools.logging "0.2.3"]
-                 [org.clojure/tools.cli "0.2.1"]
-                 [org.clojure/tools.nrepl "0.2.0-beta2"]
-                 [swank-clojure "1.4.0"]
-                 [clj-stacktrace "0.2.4"]
                  [metrics-clojure "0.7.0" :exclusions [org.clojure/clojure org.slf4j/slf4j-api]]
-                 [clj-time "0.3.7"]
-                 [org.clojure/java.jmx "0.1"]
                  ;; Filesystem utilities
                  [fs "1.1.2"]
                  ;; Configuration file parsing
@@ -51,29 +43,19 @@
                                               javax.jms/jms
                                               com.sun.jdmk/jmxtools
                                               com.sun.jmx/jmxri]]
-                 ;; Database connectivity
+                 ;; ;; Database connectivity
                  [com.jolbox/bonecp "0.7.1.RELEASE" :exclusions [org.slf4j/slf4j-api]]
                  [org.slf4j/slf4j-log4j12 "1.6.4"]
                  [org.clojure/java.jdbc "0.1.1"]
-                 [org.hsqldb/hsqldb "2.2.8"]
-                 [postgresql/postgresql "9.0-801.jdbc4"]
-                 [clojureql "1.0.3"]
                  ;; MQ connectivity
                  [clamq/clamq-activemq "0.4" :exclusions [org.slf4j/slf4j-api]]
                  [org.apache.activemq/activemq-core "5.5.1" :exclusions [org.slf4j/slf4j-api]]
-                 ;; WebAPI support libraries.
-                 [net.cgrand/moustache "1.1.0"]
-                 [clj-http "0.3.1"]
+                 ;; ;; WebAPI support libraries.
                  [ring/ring-core "1.1.1"]
                  [ring/ring-jetty-adapter "1.1.1"]]
-
-  :dev-dependencies [[lein-marginalia "0.7.0"]
-                     ;; WebAPI support libraries.
-                     [ring-mock "0.1.1"]]
-
+  :profiles {:dev {:dependencies [[lein-marginalia "0.7.0"]
+                                  ;; WebAPI support libraries.
+                                  [ring-mock "0.1.1"]
+                                  [org.hsqldb/hsqldb "2.2.8"]]}}
   :jar-exclusions [#"leiningen/"]
-  :manifest {"Build-Version" ~(version-string)}
-
-  :aot [com.puppetlabs.puppetdb.core]
-  :main com.puppetlabs.puppetdb.core
-)
+  :manifest {"Build-Version" ~(version-string)})
